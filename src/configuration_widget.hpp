@@ -61,7 +61,8 @@ public:
 
   [[nodiscard]] StringConfiguration GetRandomStringConfiguration() const
   {
-    StringConfiguration configuration(lenght_widget->value(), GetCharacterConfigurations());
+    StringConfiguration configuration(static_cast<size_t>(lenght_widget->value()),
+                                      GetCharacterConfigurations());
     return configuration;
   }
 
@@ -72,7 +73,8 @@ public:
     for (const auto &checked_state_index : checked_state_indices) {
       auto type = static_cast<CharacterConfiguration::CharacterType>(checked_state_index);
       CharacterConfiguration character_configuration(
-          type, character_configuration_widgets.at(checked_state_index)->Value());
+          type,
+          static_cast<size_t>(character_configuration_widgets.at(checked_state_index)->Value()));
       configurations.push_back(character_configuration);
     }
     return configurations;

@@ -33,7 +33,7 @@ public:
     hbox_layout->addStretch(1);
     hbox_layout->addWidget(spin_box);
 
-    connect(check_box, &QCheckBox::stateChanged, this, &CheckableSpinBox::CheckBoxStateChanged);
+    connect(check_box, &QCheckBox::checkStateChanged, this, &CheckableSpinBox::CheckBoxStateChanged);
     connect(spin_box, &QSpinBox::valueChanged, this, &CheckableSpinBox::SpinBoxValueChanged);
   }
 
@@ -55,7 +55,7 @@ signals:
 
 private slots:
 
-  void CheckBoxStateChanged(int state)
+  void CheckBoxStateChanged(Qt::CheckState state)
   {
     if (state == Qt::CheckState::Unchecked) {
       spin_box->setDisabled(true);
@@ -67,7 +67,7 @@ private slots:
     emit OptionalSpinBoxChanged();
   }
 
-  void SpinBoxValueChanged(int value) { emit OptionalSpinBoxChanged(); }
+  void SpinBoxValueChanged(int /*value*/) { emit OptionalSpinBoxChanged(); }
 
 private: // NOLINT(readability-redundant-access-specifiers)
   QPointer<QCheckBox> check_box;

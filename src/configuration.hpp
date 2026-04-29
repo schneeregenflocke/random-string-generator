@@ -9,7 +9,10 @@ class CharacterConfiguration {
 public:
   enum CharacterType : std::uint8_t { uppercase, lowercase, digit, special_character };
 
-  CharacterConfiguration(CharacterType type, size_t number) : type(type), number(number) {}
+  CharacterConfiguration(CharacterType character_type, size_t character_number)
+      : type(character_type), number(character_number)
+  {
+  }
 
   [[nodiscard]] CharacterType Type() const { return type; }
 
@@ -22,9 +25,9 @@ private:
 
 class StringConfiguration {
 public:
-  StringConfiguration(size_t string_lenght,
-                      const std::vector<CharacterConfiguration> &character_configurations)
-      : string_lenght(string_lenght), character_configurations(character_configurations)
+  StringConfiguration(size_t length,
+                      const std::vector<CharacterConfiguration> &configurations)
+      : string_lenght(length), character_configurations(configurations)
   {
   }
 

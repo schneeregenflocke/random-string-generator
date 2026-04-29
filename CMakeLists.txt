@@ -60,6 +60,33 @@ add_executable(${PROJECT_NAME})
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_23)
 cmake_print_properties(TARGETS ${PROJECT_NAME} PROPERTIES CXX_STANDARD)
 
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  target_compile_options(
+    ${PROJECT_NAME}
+    PRIVATE -Wall
+            -Wextra
+            -Wpedantic
+            -Werror
+            -Wshadow
+            -Wnon-virtual-dtor
+            -Wold-style-cast
+            -Wcast-align
+            -Wunused
+            -Woverloaded-virtual
+            -Wconversion
+            -Wsign-conversion
+            -Wnull-dereference
+            -Wdouble-promotion
+            -Wformat=2
+            -Wimplicit-fallthrough
+            -Wmisleading-indentation
+            -Wduplicated-cond
+            -Wduplicated-branches
+            -Wlogical-op
+            -Wuseless-cast
+  )
+endif()
+
 target_sources(
   ${PROJECT_NAME}
   PRIVATE src/main.cpp

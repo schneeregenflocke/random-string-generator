@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gcc --version)",
+      "Bash(cmake -S /home/titan99/code/random-string-generator -B /home/titan99/code/random-string-generator/build -G Ninja -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++)",
+      "Bash(cmake --build /home/titan99/code/random-string-generator/build)"
+    ]
+  }
+}

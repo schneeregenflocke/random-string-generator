@@ -73,7 +73,7 @@ private: // NOLINT(readability-redundant-access-specifiers)
 
     QAction *action_license_info =
         file_menu->addAction(QIcon::fromTheme("help-about"), tr("&Open Source License Info"));
-    QAction *seperator = file_menu->addSeparator();
+    file_menu->addSeparator();
     QAction *action_exit = file_menu->addAction(QIcon::fromTheme("application-exit"), tr("&Exit"));
 
     connect(action_exit, &QAction::triggered, this, &QMainWindow::close);
