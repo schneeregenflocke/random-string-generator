@@ -1,5 +1,5 @@
-#ifndef HOME_TITAN99_CODE_RANDOM_STRING_GENERATOR_SRC_CONFIGURATION_HPP
-#define HOME_TITAN99_CODE_RANDOM_STRING_GENERATOR_SRC_CONFIGURATION_HPP
+#ifndef CONFIGURATION_HPP
+#define CONFIGURATION_HPP
 
 #include <cstddef>
 #include <cstdint>
@@ -44,4 +44,4 @@ private:
   std::vector<CharacterConfiguration> character_configurations;
 };
 
-#endif // HOME_TITAN99_CODE_RANDOM_STRING_GENERATOR_SRC_CONFIGURATION_HPP
+#endif // CONFIGURATION_HPP

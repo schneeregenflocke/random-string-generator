@@ -1,4 +1,6 @@
-#pragma once
+
+#ifndef LICENSE_INFO_DIALOG_HPP
+#define LICENSE_INFO_DIALOG_HPP
 
 #include <QByteArray>
 #include <QDialog>
@@ -11,6 +13,8 @@
 #include <QVBoxLayout>
 #include <QWidget>
 #include <Qt>
+#include <QtCore/QMetaObject>
+#include <QtCore/QObject>
 
 class LicenseInfoDialog : public QDialog {
   Q_OBJECT
@@ -47,3 +51,5 @@ public:
     vbox_layout->addWidget(copyright_notice_label);
   }
 };
+
+#endif // LICENSE_INFO_DIALOG_HPP

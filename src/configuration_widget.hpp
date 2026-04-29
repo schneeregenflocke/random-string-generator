@@ -1,4 +1,6 @@
-#pragma once
+
+#ifndef CONFIGURATION_WIDGET_HPP
+#define CONFIGURATION_WIDGET_HPP
 
 #include "checkable_spinbox_widget.hpp"
 #include "configuration.hpp"
@@ -9,6 +11,8 @@
 #include <QVBoxLayout>
 #include <QWidget>
 #include <Qt>
+#include <QtCore/QMetaObject>
+#include <QtCore/QObject>
 #include <array>
 #include <cstddef>
 #include <vector>
@@ -166,3 +170,5 @@ private:
   QPointer<QSpinBox> lenght_widget;
   std::array<QPointer<CheckableSpinBox>, 4> character_configuration_widgets;
 };
+
+#endif // CONFIGURATION_WIDGET_HPP

@@ -16,3 +16,5 @@ CMakeSettings.json
 /build
 /.cache
 src/win32_rc/RCa*
+
+clang-tidy.log

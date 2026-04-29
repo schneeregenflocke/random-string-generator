@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CHECKABLE_SPINBOX_WIDGET_HPP
+#define CHECKABLE_SPINBOX_WIDGET_HPP
 
 #include <QCheckBox>
 #include <QHBoxLayout>
@@ -8,6 +9,8 @@
 #include <QString>
 #include <QWidget>
 #include <Qt>
+#include <QtCore/QMetaObject>
+#include <QtCore/QObject>
 
 class CheckableSpinBox : public QWidget {
   Q_OBJECT
@@ -29,7 +32,8 @@ public:
     hbox_layout->addStretch(1);
     hbox_layout->addWidget(spin_box);
 
-    connect(check_box, &QCheckBox::checkStateChanged, this, &CheckableSpinBox::CheckBoxStateChanged);
+    connect(check_box, &QCheckBox::checkStateChanged, this,
+            &CheckableSpinBox::CheckBoxStateChanged);
     connect(spin_box, &QSpinBox::valueChanged, this, &CheckableSpinBox::SpinBoxValueChanged);
   }
 
@@ -62,10 +66,11 @@ private slots:
 
     emit OptionalSpinBoxChanged();
   }
-
   void SpinBoxValueChanged(int /*value*/) { emit OptionalSpinBoxChanged(); }
 
 private:
   QPointer<QCheckBox> check_box;
   QPointer<QSpinBox> spin_box;
 };
+
+#endif // CHECKABLE_SPINBOX_WIDGET_HPP

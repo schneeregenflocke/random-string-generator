@@ -1,4 +1,6 @@
-#pragma once
+
+#ifndef MAIN_WINDOW_HPP
+#define MAIN_WINDOW_HPP
 
 #include "configuration_widget.hpp"
 #include "generator.hpp"
@@ -16,6 +18,8 @@
 #include <QTextEdit>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QtCore/QMetaObject>
+#include <QtCore/QObject>
 #include <memory>
 #include <string>
 
@@ -89,3 +93,5 @@ private:
   std::unique_ptr<Generator> generator;
   QPointer<LicenseInfoDialog> license_info_dialog;
 };
+
+#endif // MAIN_WINDOW_HPP

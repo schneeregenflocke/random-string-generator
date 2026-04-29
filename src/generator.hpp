@@ -1,4 +1,6 @@
-#pragma once
+
+#ifndef GENERATOR_HPP
+#define GENERATOR_HPP
 
 #include "configuration.hpp"
 #include <cstddef>
@@ -51,13 +53,13 @@ public:
       }
     }
 
-    const size_t remaining_password_lenght =
-        configuration.StringLenght() - random_indices_position;
+    const size_t remaining_password_lenght = configuration.StringLenght() - random_indices_position;
 
     for (size_t index = 0; index < remaining_password_lenght; ++index) {
       const auto random_select =
           generate_random_integer(0, configuration.NumberCharacterTypes() - 1);
       const auto string_position = random_indices.at(random_indices_position);
+
       random_string.at(string_position) =
           generate_random_char(configuration.GetCharacterConfiguration(random_select).Type());
       ++random_indices_position;
@@ -104,8 +106,8 @@ private:
     }
 
     if (type == CharacterConfiguration::CharacterType::special_character) {
-      random_letter = static_cast<char>(special_characters.at(
-          generate_random_integer(0, special_characters.size() - 1)));
+      random_letter = static_cast<char>(
+          special_characters.at(generate_random_integer(0, special_characters.size() - 1)));
     }
 
     return random_letter;
@@ -133,3 +135,5 @@ private:
   std::vector<char> special_characters;
   std::vector<size_t> random_indices;
 };
+
+#endif // GENERATOR_HPP
