@@ -3,7 +3,20 @@
     "allow": [
       "Bash(gcc --version)",
       "Bash(cmake -S /home/titan99/code/random-string-generator -B /home/titan99/code/random-string-generator/build -G Ninja -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++)",
-      "Bash(cmake --build /home/titan99/code/random-string-generator/build)"
+      "Bash(cmake --build /home/titan99/code/random-string-generator/build)",
+      "Bash(gdb --version)",
+      "Bash(gdb --help)",
+      "Bash(gdb -nh -nx --batch -ex 'show data-directory' -ex 'show auto-load' -ex 'show history filename')",
+      "Read(//home/titan99/**)",
+      "Bash(gdb --configuration)",
+      "Bash(gdb --batch -ex 'show debuginfod enabled' -ex 'show auto-solib-add' -ex 'show pagination' -ex 'show breakpoint pending' -ex 'show print pretty' -ex 'show print object' -ex 'show print vtbl' -ex 'show print array')",
+      "Bash(gdb --batch -ex start -ex 'info breakpoints' -ex 'info inferiors' -ex 'info source' -ex bt -ex continue -ex quit /home/titan99/code/random-string-generator/build/random-string-generator)",
+      "Bash(kill 62167)",
+      "Bash(cmake -S /home/titan99/code/random-string-generator -B /home/titan99/code/random-string-generator/build -G Ninja -DCMAKE_BUILD_TYPE=Debug)",
+      "Bash(gdb --batch -ex 'show print symbol-loading' -ex 'b main' -ex run -ex 'info source' -ex 'list main,+5' -ex kill -ex quit /home/titan99/code/random-string-generator/build/random-string-generator)"
+    ],
+    "additionalDirectories": [
+      "/home/titan99"
     ]
   }
 }

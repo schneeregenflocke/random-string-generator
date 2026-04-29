@@ -30,7 +30,7 @@ public:
     QPointer<QWidget> central_widget = new QWidget(this);
     setCentralWidget(central_widget);
 
-    QPointer<QVBoxLayout> vbox_layout = new QVBoxLayout(this);
+    QPointer<QVBoxLayout> vbox_layout = new QVBoxLayout(central_widget);
 
     vbox_layout->addWidget(configuration_widget);
     vbox_layout->addWidget(indices_field);
@@ -40,8 +40,6 @@ public:
     generate_password_button->setAutoDefault(true);
     vbox_layout->addWidget(generate_password_button);
     // generate_password_button->setShortcut(QKeySequence(Qt::Key::Key_Space));
-
-    central_widget->setLayout(vbox_layout);
 
     connect(generate_password_button, &QPushButton::clicked, this, &MainWindow::GenerateString);
 
