@@ -1,5 +1,5 @@
-#ifndef CONFIGURATION_H
-#define CONFIGURATION_H
+#ifndef HOME_TITAN99_CODE_RANDOM_STRING_GENERATOR_SRC_CONFIGURATION_HPP
+#define HOME_TITAN99_CODE_RANDOM_STRING_GENERATOR_SRC_CONFIGURATION_HPP
 
 #include <cstddef>
 #include <cstdint>
@@ -7,7 +7,7 @@
 
 class CharacterConfiguration {
 public:
-  enum CharacterType : std::uint8_t { uppercase, lowercase, digit, special_character };
+  enum class CharacterType : std::uint8_t { uppercase, lowercase, digit, special_character };
 
   CharacterConfiguration(CharacterType character_type, size_t character_number)
       : type(character_type), number(character_number)
@@ -25,8 +25,7 @@ private:
 
 class StringConfiguration {
 public:
-  StringConfiguration(size_t length,
-                      const std::vector<CharacterConfiguration> &configurations)
+  StringConfiguration(size_t length, const std::vector<CharacterConfiguration> &configurations)
       : string_lenght(length), character_configurations(configurations)
   {
   }
@@ -37,7 +36,7 @@ public:
 
   [[nodiscard]] CharacterConfiguration GetCharacterConfiguration(size_t index) const
   {
-    return character_configurations[index];
+    return character_configurations.at(index);
   }
 
 private:
@@ -45,4 +44,4 @@ private:
   std::vector<CharacterConfiguration> character_configurations;
 };
 
-#endif // CONFIGURATION_H
+#endif // HOME_TITAN99_CODE_RANDOM_STRING_GENERATOR_SRC_CONFIGURATION_HPP

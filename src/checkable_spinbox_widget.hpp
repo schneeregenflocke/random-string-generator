@@ -1,17 +1,13 @@
-#ifndef CHECKABLE_SPINBOX_WIDGET_H
-#define CHECKABLE_SPINBOX_WIDGET_H
+#pragma once
 
 #include <QCheckBox>
-#include <QFile>
 #include <QHBoxLayout>
-#include <QLabel>
+#include <QObject>
 #include <QPointer>
-#include <QResource>
 #include <QSpinBox>
 #include <QString>
-#include <QTextEdit>
-#include <QTextStream>
 #include <QWidget>
+#include <Qt>
 
 class CheckableSpinBox : public QWidget {
   Q_OBJECT
@@ -20,7 +16,7 @@ public:
   explicit CheckableSpinBox(QWidget *parent = nullptr)
       : QWidget(parent), check_box(new QCheckBox(this)), spin_box(new QSpinBox(this))
   {
-    QPointer<QHBoxLayout> hbox_layout = new QHBoxLayout(this);
+    const QPointer<QHBoxLayout> hbox_layout = new QHBoxLayout(this);
     setLayout(hbox_layout);
     hbox_layout->setContentsMargins(0, 0, 0, 0);
 
@@ -45,7 +41,7 @@ public:
 
   void SetCheckState(Qt::CheckState state) { check_box->setCheckState(state); }
 
-  Qt::CheckState CheckState() const { return check_box->checkState(); }
+  [[nodiscard]] Qt::CheckState CheckState() const { return check_box->checkState(); }
 
   void SetRange(const int min, const int max) { spin_box->setRange(min, max); }
 
@@ -69,9 +65,7 @@ private slots:
 
   void SpinBoxValueChanged(int /*value*/) { emit OptionalSpinBoxChanged(); }
 
-private: // NOLINT(readability-redundant-access-specifiers)
+private:
   QPointer<QCheckBox> check_box;
   QPointer<QSpinBox> spin_box;
 };
-
-#endif // CHECKABLE_SPINBOX_WIDGET_H

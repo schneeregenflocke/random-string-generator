@@ -13,10 +13,12 @@
       "Bash(gdb --batch -ex start -ex 'info breakpoints' -ex 'info inferiors' -ex 'info source' -ex bt -ex continue -ex quit /home/titan99/code/random-string-generator/build/random-string-generator)",
       "Bash(kill 62167)",
       "Bash(cmake -S /home/titan99/code/random-string-generator -B /home/titan99/code/random-string-generator/build -G Ninja -DCMAKE_BUILD_TYPE=Debug)",
-      "Bash(gdb --batch -ex 'show print symbol-loading' -ex 'b main' -ex run -ex 'info source' -ex 'list main,+5' -ex kill -ex quit /home/titan99/code/random-string-generator/build/random-string-generator)"
+      "Bash(gdb --batch -ex 'show print symbol-loading' -ex 'b main' -ex run -ex 'info source' -ex 'list main,+5' -ex kill -ex quit /home/titan99/code/random-string-generator/build/random-string-generator)",
+      "Read(//tmp/**)"
     ],
     "additionalDirectories": [
-      "/home/titan99"
+      "/home/titan99",
+      "/tmp"
     ]
   }
 }
