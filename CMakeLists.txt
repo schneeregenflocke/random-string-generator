@@ -2,29 +2,15 @@ cmake_minimum_required(VERSION 3.16)
 
 include(CMakePrintHelpers)
 
-# file(STRINGS "VERSION" versionFile) string(REGEX MATCHALL "([0-9]+)" versionList ${versionFile})
-# list(GET versionList 0 ${PROJECT_NAME}_VERSION_MAJOR) list(GET versionList 1
-# ${PROJECT_NAME}_VERSION_MINOR) list(GET versionList 2 ${PROJECT_NAME}_VERSION_PATCH)
-# set(${PROJECT_NAME}_VERSION_TWEAK)
 
-# project(SimpleRandomStringGenerator VERSION ${versionFile})
-project(lightweight-random-generator-string)
+project(random-string-generator VERSION 0.1.0 LANGUAGES CXX)
 
-# cmake_print_variables(versionFile versionList ${PROJECT_NAME}_VERSION_MAJOR
-# ${PROJECT_NAME}_VERSION_MINOR ${PROJECT_NAME}_VERSION_PATCH ${PROJECT_NAME}_VERSION_TWEAK
-# PROJECT_VERSION)
 
-# set(CMAKE_CXX_STANDARD 20) set(CMAKE_CXX_STANDARD_REQUIRED True)
-cmake_print_variables(CMAKE_CXX_STANDARD, CMAKE_CXX_STANDARD_REQUIRED)
+cmake_print_variables(CMAKE_CXX_STANDARD)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS
     ON
     CACHE BOOL "Generate compile_commands.json for clang tooling" FORCE
-)
-
-set(Qt6_ROOT
-    "$ENV{Qt6_ROOT}"
-    CACHE PATH "Path to your Qt installation prefix" FORCE
 )
 
 cmake_print_variables(
@@ -71,7 +57,7 @@ cmake_print_variables(
 
 add_executable(${PROJECT_NAME})
 
-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_23)
 cmake_print_properties(TARGETS ${PROJECT_NAME} PROPERTIES CXX_STANDARD)
 
 target_sources(
@@ -100,11 +86,6 @@ if(MSVC)
     TARGET ${PROJECT_NAME}
     POST_BUILD
     COMMAND ${Qt6_ROOT}/bin/qtenv2.bat
-    # COMMAND ${Qt6_ROOT}/bin/windeployqt.exe $<IF:$<CONFIG:Debug>,"--debug","--release"> --verbose
-    # 1 --no-system-d3d-compiler --no-svg ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR} COMMAND
-    # ${Qt6_ROOT}/bin/windeployqt.exe $<IF:$<CONFIG:Debug>,"--debug","--release"> --verbose 1
-    # --no-system-d3d-compiler --no-svg --compiler-runtime --dir
-    # ${CMAKE_CURRENT_BINARY_DIR}/windeployqt_stuff $<TARGET_FILE:${PROJECT_NAME}>
     COMMAND ${WINDEPLOYQT_EXECUTABLE} $<IF:$<CONFIG:Debug>,"--debug","--release"> --verbose 1
             --no-system-d3d-compiler --no-svg ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}
     COMMAND
