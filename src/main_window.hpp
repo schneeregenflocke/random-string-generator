@@ -12,6 +12,7 @@
 #include <QMainWindow>
 #include <QMenuBar>
 #include <QObject>
+#include <QtCore/qobjectdefs.h>
 #include <QPointer>
 #include <QPushButton>
 #include <QString>

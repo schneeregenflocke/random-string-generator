@@ -6,6 +6,7 @@
 #include "configuration.hpp"
 #include <QLabel>
 #include <QObject>
+#include <QtCore/qobjectdefs.h>
 #include <QPointer>
 #include <QSpinBox>
 #include <QVBoxLayout>

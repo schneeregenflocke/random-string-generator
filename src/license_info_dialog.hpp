@@ -6,6 +6,7 @@
 #include <QDialog>
 #include <QLabel>
 #include <QObject>
+#include <QtCore/qobjectdefs.h>
 #include <QPointer>
 #include <QResource>
 #include <QString>

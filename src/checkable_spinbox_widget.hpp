@@ -4,6 +4,7 @@
 #include <QCheckBox>
 #include <QHBoxLayout>
 #include <QObject>
+#include <QtCore/qobjectdefs.h>
 #include <QPointer>
 #include <QSpinBox>
 #include <QString>
