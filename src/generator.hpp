@@ -1,138 +1,84 @@
-
 #ifndef GENERATOR_HPP
 #define GENERATOR_HPP
 
 #include "configuration.hpp"
+#include <algorithm>
 #include <cstddef>
-#include <iterator>
+#include <numeric>
 #include <random>
 #include <string>
+#include <string_view>
 #include <vector>
 
 class Generator {
 public:
-  Generator() { init_special_characters(); }
+  Generator() : engine(std::random_device{}()) {}
 
-  static std::vector<size_t> generate_random_indices(const size_t number)
+  [[nodiscard]] std::string GenerateString(const StringConfiguration &configuration)
   {
-    std::vector<size_t> available_indices(number);
-    for (size_t index = 0; index < number; ++index) {
-      available_indices.at(index) = index;
-    }
+    random_indices = GenerateRandomIndices(configuration.StringLength());
 
-    std::vector<size_t> random_indices(number);
-    for (auto &random_index : random_indices) {
-
-      const auto random_number = generate_random_integer(0, (available_indices.size() - 1));
-      const auto available_index = available_indices.at(random_number);
-      random_index = available_index;
-
-      auto iterator = available_indices.begin();
-      std::advance(iterator, random_number);
-      available_indices.erase(iterator);
-    }
-
-    return random_indices;
-  }
-
-  [[nodiscard]] std::string generate_string(const StringConfiguration &configuration)
-  {
-    random_indices = generate_random_indices(configuration.StringLenght());
-
-    std::string random_string;
-    random_string.resize(configuration.StringLenght());
+    std::string random_string(configuration.StringLength(), '\0');
 
     size_t random_indices_position = 0;
     for (size_t index = 0; index < configuration.NumberCharacterTypes(); ++index) {
-      for (size_t subindex = 0; subindex < configuration.GetCharacterConfiguration(index).Number();
-           ++subindex) {
+      const auto &character_configuration = configuration.GetCharacterConfiguration(index);
+      for (size_t subindex = 0; subindex < character_configuration.Number(); ++subindex) {
         const auto string_position = random_indices.at(random_indices_position);
-        random_string.at(string_position) =
-            generate_random_char(configuration.GetCharacterConfiguration(index).Type());
+        random_string.at(string_position) = GenerateRandomChar(character_configuration.Type());
         ++random_indices_position;
       }
     }
 
-    const size_t remaining_password_lenght = configuration.StringLenght() - random_indices_position;
-
-    for (size_t index = 0; index < remaining_password_lenght; ++index) {
+    while (random_indices_position < configuration.StringLength()) {
       const auto random_select =
-          generate_random_integer(0, configuration.NumberCharacterTypes() - 1);
+          GenerateRandomInteger(0, configuration.NumberCharacterTypes() - 1);
       const auto string_position = random_indices.at(random_indices_position);
-
       random_string.at(string_position) =
-          generate_random_char(configuration.GetCharacterConfiguration(random_select).Type());
+          GenerateRandomChar(configuration.GetCharacterConfiguration(random_select).Type());
       ++random_indices_position;
     }
 
     return random_string;
   }
 
-  auto get_random_indices() { return random_indices; }
+  [[nodiscard]] const std::vector<size_t> &GetRandomIndices() const { return random_indices; }
 
 private:
-  static size_t generate_random_integer(const size_t min, const size_t max)
+  [[nodiscard]] std::vector<size_t> GenerateRandomIndices(const size_t number)
   {
-    std::random_device random_device;
+    std::vector<size_t> indices(number);
+    std::ranges::iota(indices, size_t{0});
+    std::ranges::shuffle(indices, engine);
+    return indices;
+  }
+
+  [[nodiscard]] size_t GenerateRandomInteger(const size_t min, const size_t max)
+  {
     std::uniform_int_distribution<size_t> uniform_int(min, max);
-    const size_t random_number = uniform_int(random_device);
-    return random_number;
+    return uniform_int(engine);
   }
 
-  [[nodiscard]] char generate_random_char(CharacterConfiguration::CharacterType type) const
+  [[nodiscard]] char GenerateRandomChar(CharacterConfiguration::CharacterType type)
   {
-    static constexpr size_t ascii_uppercase_first = 'A';
-    static constexpr size_t ascii_uppercase_last = 'Z';
-    static constexpr size_t ascii_lowercase_first = 'a';
-    static constexpr size_t ascii_lowercase_last = 'z';
-    static constexpr size_t ascii_digit_first = '0';
-    static constexpr size_t ascii_digit_last = '9';
-
-    char random_letter = 0;
-
-    if (type == CharacterConfiguration::CharacterType::uppercase) {
-      random_letter =
-          static_cast<char>(generate_random_integer(ascii_uppercase_first, ascii_uppercase_last));
+    switch (type) {
+    case CharacterConfiguration::CharacterType::uppercase:
+      return static_cast<char>(GenerateRandomInteger('A', 'Z'));
+    case CharacterConfiguration::CharacterType::lowercase:
+      return static_cast<char>(GenerateRandomInteger('a', 'z'));
+    case CharacterConfiguration::CharacterType::digit:
+      return static_cast<char>(GenerateRandomInteger('0', '9'));
+    case CharacterConfiguration::CharacterType::special_character:
+      return special_characters.at(GenerateRandomInteger(0, special_characters.size() - 1));
     }
-
-    if (type == CharacterConfiguration::CharacterType::lowercase) {
-      random_letter =
-          static_cast<char>(generate_random_integer(ascii_lowercase_first, ascii_lowercase_last));
-    }
-
-    if (type == CharacterConfiguration::CharacterType::digit) {
-      random_letter =
-          static_cast<char>(generate_random_integer(ascii_digit_first, ascii_digit_last));
-    }
-
-    if (type == CharacterConfiguration::CharacterType::special_character) {
-      random_letter = static_cast<char>(
-          special_characters.at(generate_random_integer(0, special_characters.size() - 1)));
-    }
-
-    return random_letter;
+    return 0;
   }
 
-  void init_special_characters()
-  {
-    for (char index = '!'; index <= '/'; ++index) {
-      special_characters.push_back(index);
-    }
+  // All printable ASCII non-alphanumerics: !"#$%&'()*+,-./ :;<=>?@ [\]^_` {|}~
+  static constexpr std::string_view special_characters =
+      R"(!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~)";
 
-    for (char index = ':'; index <= '@'; ++index) {
-      special_characters.push_back(index);
-    }
-
-    for (char index = '['; index <= '`'; ++index) {
-      special_characters.push_back(index);
-    }
-
-    for (char index = '{'; index <= '~'; ++index) {
-      special_characters.push_back(index);
-    }
-  }
-
-  std::vector<char> special_characters;
+  std::mt19937 engine;
   std::vector<size_t> random_indices;
 };
 

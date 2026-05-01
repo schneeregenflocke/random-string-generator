@@ -1,4 +1,3 @@
-
 #ifndef CONFIGURATION_WIDGET_HPP
 #define CONFIGURATION_WIDGET_HPP
 
@@ -6,14 +5,14 @@
 #include "configuration.hpp"
 #include <QLabel>
 #include <QObject>
-#include <QtCore/qobjectdefs.h>
 #include <QPointer>
 #include <QSpinBox>
 #include <QVBoxLayout>
 #include <QWidget>
 #include <Qt>
-#include <QtCore/QMetaObject>
-#include <QtCore/QObject>
+#include <QtCore/qtmetamacros.h>
+#include <QtCore/qttranslation.h>
+#include <algorithm>
 #include <array>
 #include <cstddef>
 #include <vector>
@@ -23,65 +22,55 @@ class ConfigurationWidget : public QWidget {
 
 public:
   explicit ConfigurationWidget(QWidget *parent)
-      : QWidget(parent), lenght_widget(new QSpinBox(this)),
+      : QWidget(parent), length_widget(new QSpinBox(this)),
         character_configuration_widgets{nullptr, nullptr, nullptr, nullptr}
   {
     const QPointer<QVBoxLayout> vbox_layout = new QVBoxLayout(this);
-    setLayout(vbox_layout);
     vbox_layout->setContentsMargins(0, 0, 0, 0);
 
-    lenght_widget->setRange(0, max_password_lenght);
-    lenght_widget->setValue(inital_password_lenght);
-    vbox_layout->addWidget(lenght_widget);
+    length_widget->setRange(0, max_password_length);
+    length_widget->setValue(initial_password_length);
+    vbox_layout->addWidget(length_widget);
 
-    vbox_layout->addWidget(new QLabel(tr("String lenght:"), this));
+    vbox_layout->addWidget(new QLabel(tr("String length:"), this));
 
-    connect(lenght_widget, &QSpinBox::valueChanged, this,
+    connect(length_widget, &QSpinBox::valueChanged, this,
             &ConfigurationWidget::UpdatePasswordConfiguration);
 
-    for (auto &character_configuration_widget : character_configuration_widgets) {
-      const QPointer<CheckableSpinBox> temp_pointer = new CheckableSpinBox(this);
-      character_configuration_widget = temp_pointer;
-      vbox_layout->addWidget(character_configuration_widget);
-    }
+    static constexpr std::array<const char *, character_type_count> labels{
+        QT_TR_NOOP("Minimum number of uppercase letters"),
+        QT_TR_NOOP("Minimum number of lowercase letters"),
+        QT_TR_NOOP("Minimum number of digits"),
+        QT_TR_NOOP("Minimum number of special characters")};
+    static constexpr std::array<int, character_type_count> initial_values{
+        initial_minimum_uppercase, initial_minimum_lowercase, initial_minimum_digits,
+        initial_minimum_special};
 
-    character_configuration_widgets.at(0)->SetText(tr("Minimum number of uppercase letters"));
-    character_configuration_widgets.at(0)->SetValue(initial_minimum_number_uppercase_letters);
+    for (size_t index = 0; index < character_configuration_widgets.size(); ++index) {
+      const QPointer<CheckableSpinBox> widget = new CheckableSpinBox(this);
+      widget->SetText(tr(labels.at(index)));
+      widget->SetValue(initial_values.at(index));
+      widget->SetRange(0, max_password_length);
+      character_configuration_widgets.at(index) = widget;
+      vbox_layout->addWidget(widget);
 
-    character_configuration_widgets.at(1)->SetText(tr("Minimum number of lowercase letters"));
-    character_configuration_widgets.at(1)->SetValue(initial_minimum_number_lowercase_letters);
-
-    character_configuration_widgets.at(2)->SetText(tr("Minimum number of digits"));
-    character_configuration_widgets.at(2)->SetValue(initial_minimum_number_digits);
-
-    character_configuration_widgets.at(3)->SetText(tr("Minimum number of special characters"));
-    character_configuration_widgets.at(3)->SetValue(initial_minimum_special_characters);
-
-    SetCharacterConfigurationWidgetsRanges(max_password_lenght);
-
-    for (auto &character_configuration_widget : character_configuration_widgets) {
-      connect(character_configuration_widget.get(), &CheckableSpinBox::OptionalSpinBoxChanged, this,
+      connect(widget, &CheckableSpinBox::OptionalSpinBoxChanged, this,
               &ConfigurationWidget::UpdatePasswordConfiguration);
     }
   }
 
   [[nodiscard]] StringConfiguration GetRandomStringConfiguration() const
   {
-    StringConfiguration configuration(static_cast<size_t>(lenght_widget->value()),
-                                      GetCharacterConfigurations());
-    return configuration;
+    return {static_cast<size_t>(length_widget->value()), GetCharacterConfigurations()};
   }
 
   [[nodiscard]] std::vector<CharacterConfiguration> GetCharacterConfigurations() const
   {
-    const auto checked_state_indices = GetCheckedStateIndices();
     std::vector<CharacterConfiguration> configurations;
-    for (const auto &checked_state_index : checked_state_indices) {
-      auto type = static_cast<CharacterConfiguration::CharacterType>(checked_state_index);
-      const CharacterConfiguration character_configuration(
-          type,
-          static_cast<size_t>(character_configuration_widgets.at(checked_state_index)->Value()));
-      configurations.push_back(character_configuration);
+    for (const auto checked_index : GetCheckedStateIndices()) {
+      configurations.emplace_back(
+          static_cast<CharacterConfiguration::CharacterType>(checked_index),
+          static_cast<size_t>(character_configuration_widgets.at(checked_index)->Value()));
     }
     return configurations;
   }
@@ -91,34 +80,29 @@ private slots:
   void UpdatePasswordConfiguration()
   {
     // prevent that there is no choice
-    const auto checked_state_indices = GetCheckedStateIndices();
-    if (checked_state_indices.empty()) {
-      for (auto &character_configuration_widget : character_configuration_widgets) {
-        if (sender() == character_configuration_widget) {
-          character_configuration_widget->SetCheckState(Qt::CheckState::Checked);
+    if (GetCheckedStateIndices().empty()) {
+      for (auto &widget : character_configuration_widgets) {
+        if (sender() == widget) {
+          widget->SetCheckState(Qt::CheckState::Checked);
         }
       }
     }
 
     // prevent the password configuration from exceeding the string length
     while (ConfigurationExceedingSize() > 0) {
-      if (sender() == lenght_widget) {
-        if (GetCheckedValuesSum() < max_password_lenght) {
-          const int configuration_sum = GetCheckedValuesSum();
-          lenght_widget->setValue(configuration_sum);
-        } else {
-          lenght_widget->setValue(max_password_lenght);
-        }
+      if (sender() == length_widget) {
+        length_widget->setValue(std::min(GetCheckedValuesSum(), max_password_length));
+        continue;
       }
 
-      for (auto &character_configuration_widget : character_configuration_widgets) {
-        if (sender() == character_configuration_widget) {
-          if (GetCheckedValuesSum() <= max_password_lenght) {
-            lenght_widget->setValue(GetCheckedValuesSum());
-          } else {
-            character_configuration_widget->SetValue(character_configuration_widget->Value() -
-                                                     ConfigurationExceedingSize());
-          }
+      for (auto &widget : character_configuration_widgets) {
+        if (sender() != widget) {
+          continue;
+        }
+        if (GetCheckedValuesSum() <= max_password_length) {
+          length_widget->setValue(GetCheckedValuesSum());
+        } else {
+          widget->SetValue(widget->Value() - ConfigurationExceedingSize());
         }
       }
     }
@@ -127,10 +111,7 @@ private slots:
 private:
   [[nodiscard]] int ConfigurationExceedingSize() const
   {
-    const int password_lenght = lenght_widget->value();
-    const int checked_values_sum = GetCheckedValuesSum();
-    const int exceeding_size = checked_values_sum - password_lenght;
-    return exceeding_size;
+    return GetCheckedValuesSum() - length_widget->value();
   }
 
   [[nodiscard]] std::vector<size_t> GetCheckedStateIndices() const
@@ -146,30 +127,23 @@ private:
 
   [[nodiscard]] int GetCheckedValuesSum() const
   {
-    const auto checked_state_indices = GetCheckedStateIndices();
     int sum = 0;
-    for (const auto &checked_state_index : checked_state_indices) {
-      sum += character_configuration_widgets.at(checked_state_index)->Value();
+    for (const auto checked_index : GetCheckedStateIndices()) {
+      sum += character_configuration_widgets.at(checked_index)->Value();
     }
     return sum;
   }
 
-  void SetCharacterConfigurationWidgetsRanges(int max_range)
-  {
-    for (auto &minimum_number_widget : character_configuration_widgets) {
-      minimum_number_widget->SetRange(0, max_range);
-    }
-  }
+  static constexpr size_t character_type_count = 4;
+  static constexpr int max_password_length = 1024;
+  static constexpr int initial_password_length = 32;
+  static constexpr int initial_minimum_uppercase = 1;
+  static constexpr int initial_minimum_lowercase = 1;
+  static constexpr int initial_minimum_digits = 1;
+  static constexpr int initial_minimum_special = 1;
 
-  static constexpr int max_password_lenght = 1024;
-  static constexpr int inital_password_lenght = 32;
-  static constexpr int initial_minimum_number_uppercase_letters = 1;
-  static constexpr int initial_minimum_number_lowercase_letters = 1;
-  static constexpr int initial_minimum_number_digits = 1;
-  static constexpr int initial_minimum_special_characters = 1;
-
-  QPointer<QSpinBox> lenght_widget;
-  std::array<QPointer<CheckableSpinBox>, 4> character_configuration_widgets;
+  QPointer<QSpinBox> length_widget;
+  std::array<QPointer<CheckableSpinBox>, character_type_count> character_configuration_widgets;
 };
 
 #endif // CONFIGURATION_WIDGET_HPP

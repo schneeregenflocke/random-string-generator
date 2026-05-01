@@ -4,14 +4,12 @@
 #include <QCheckBox>
 #include <QHBoxLayout>
 #include <QObject>
-#include <QtCore/qobjectdefs.h>
 #include <QPointer>
 #include <QSpinBox>
 #include <QString>
 #include <QWidget>
 #include <Qt>
-#include <QtCore/QMetaObject>
-#include <QtCore/QObject>
+#include <QtCore/qtmetamacros.h>
 
 class CheckableSpinBox : public QWidget {
   Q_OBJECT
@@ -21,7 +19,6 @@ public:
       : QWidget(parent), check_box(new QCheckBox(this)), spin_box(new QSpinBox(this))
   {
     const QPointer<QHBoxLayout> hbox_layout = new QHBoxLayout(this);
-    setLayout(hbox_layout);
     hbox_layout->setContentsMargins(0, 0, 0, 0);
 
     constexpr int minimum_width = 100;
@@ -58,15 +55,10 @@ private slots:
 
   void CheckBoxStateChanged(Qt::CheckState state)
   {
-    if (state == Qt::CheckState::Unchecked) {
-      spin_box->setDisabled(true);
-    }
-    if (state == Qt::CheckState::Checked) {
-      spin_box->setDisabled(false);
-    }
-
+    spin_box->setEnabled(state == Qt::CheckState::Checked);
     emit OptionalSpinBoxChanged();
   }
+
   void SpinBoxValueChanged(int /*value*/) { emit OptionalSpinBoxChanged(); }
 
 private:

@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <utility>
 #include <vector>
 
 class CharacterConfiguration {
@@ -25,22 +26,22 @@ private:
 
 class StringConfiguration {
 public:
-  StringConfiguration(size_t length, const std::vector<CharacterConfiguration> &configurations)
-      : string_lenght(length), character_configurations(configurations)
+  StringConfiguration(size_t length, std::vector<CharacterConfiguration> configurations)
+      : string_length(length), character_configurations(std::move(configurations))
   {
   }
 
-  [[nodiscard]] size_t StringLenght() const { return string_lenght; }
+  [[nodiscard]] size_t StringLength() const { return string_length; }
 
   [[nodiscard]] size_t NumberCharacterTypes() const { return character_configurations.size(); }
 
-  [[nodiscard]] CharacterConfiguration GetCharacterConfiguration(size_t index) const
+  [[nodiscard]] const CharacterConfiguration &GetCharacterConfiguration(size_t index) const
   {
     return character_configurations.at(index);
   }
 
 private:
-  size_t string_lenght;
+  size_t string_length;
   std::vector<CharacterConfiguration> character_configurations;
 };
 

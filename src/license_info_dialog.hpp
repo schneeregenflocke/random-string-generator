@@ -1,4 +1,3 @@
-
 #ifndef LICENSE_INFO_DIALOG_HPP
 #define LICENSE_INFO_DIALOG_HPP
 
@@ -6,7 +5,6 @@
 #include <QDialog>
 #include <QLabel>
 #include <QObject>
-#include <QtCore/qobjectdefs.h>
 #include <QPointer>
 #include <QResource>
 #include <QString>
@@ -14,8 +12,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 #include <Qt>
-#include <QtCore/QMetaObject>
-#include <QtCore/QObject>
+#include <QtCore/qtmetamacros.h>
 
 class LicenseInfoDialog : public QDialog {
   Q_OBJECT
@@ -32,7 +29,6 @@ public:
     setMinimumSize(min_window_width, min_window_height);
 
     const QPointer<QVBoxLayout> vbox_layout = new QVBoxLayout(this);
-    setLayout(vbox_layout);
 
     const QResource resource(":/LICENSE.txt");
     const QByteArray bytes = resource.uncompressedData();
@@ -45,7 +41,7 @@ public:
     const QPointer<QLabel> application_name_label =
         new QLabel("lightweight-random-generator-string", this);
     const QPointer<QLabel> copyright_notice_label =
-        new QLabel(QString::fromWCharArray(L"Copyright \xa9 2021 - 2025 Marco Peyer"));
+        new QLabel(QString::fromWCharArray(L"Copyright \xa9 2021 - 2025 Marco Peyer"), this);
     application_name_label->setTextInteractionFlags(Qt::TextSelectableByMouse);
     copyright_notice_label->setTextInteractionFlags(Qt::TextSelectableByMouse);
     vbox_layout->addWidget(application_name_label);
